@@ -11,11 +11,16 @@ public class PlayerInput : MonoBehaviour {
 
     private float horizontalMove = 0f;
     private bool jump = false;
-    private bool crouch = false;
+    private bool attacking = false;
+    private float attackCooldown = 0.2f;
+    private float attackTimer = 0f;
+
+    public Collider2D attackTrigger;
 
     private void Start() {
         controller = GetComponent<CharacterController2D>();
         animator = GetComponent<Animator>();
+        attackTrigger.enabled = false;
     }
 
     void Update() {
@@ -25,13 +30,35 @@ public class PlayerInput : MonoBehaviour {
             jump = true;
         }
 
+        if (Input.GetButtonDown("Fire1") && !attacking)
+        {
+            attacking = true;
+            attackTimer = attackCooldown;
+            attackTrigger.enabled = true;
+        }
+
+        if (attacking)
+        {
+            if (attackTimer > 0)
+            {
+                //count down attack animation
+                attackTimer -= Time.deltaTime;
+            }
+            else
+            {
+                attacking = false;
+                attackTrigger.enabled = false;
+            }
+        }
+
         animator.SetFloat("Speed", controller.speed);
         animator.SetBool("IsJumping", !controller.isGrounded);
+        animator.SetBool("IsAttacking", attacking);
     }
 
     void FixedUpdate() {
         // move our character
-        controller.Move(horizontalMove * Time.fixedDeltaTime, crouch, jump);
+        controller.Move(horizontalMove * Time.fixedDeltaTime, jump);
         jump = false;
     }
 }

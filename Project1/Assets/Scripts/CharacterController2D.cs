@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 public class CharacterController2D : MonoBehaviour {
 
@@ -59,7 +60,6 @@ public class CharacterController2D : MonoBehaviour {
 
         // find any ground layer colliders closer than the ground position
         Collider2D[] colliders = Physics2D.OverlapCircleAll(groundPosition.position, groundedRadius, groundLayers);
-        // Debug.Log("Overlapping colliders: " + colliders.Length);
         for (int i = 0; i < colliders.Length; i++) {
             // if any of the colliders are not the object iself, it must be the ground
             if (colliders[i].gameObject != gameObject) {
@@ -75,42 +75,10 @@ public class CharacterController2D : MonoBehaviour {
     }
 
 
-    public void Move(float move, bool crouch, bool jump) {
-        if (!crouch) {
-            if (Physics2D.OverlapCircle(ceilingPosition.position, ceilingRadius, groundLayers)) {
-                // the player cannot currently stand up
-                crouch = true;
-            }
-        }
+    public void Move(float move, bool jump) {
 
         // only control the player if grounded or canAirControl is turned on
         if (isGrounded || canAirControl) {
-            if (crouch) {
-                if (!wasCrouching) {
-                    // if we weren't crouching before, but now are, generate the crouch event
-                    wasCrouching = true;
-                    OnCrouchEvent.Invoke(true);
-                }
-
-                // move more slowly when crouched
-                move *= crouchSpeedMultiplier;
-
-                // when crouching, disable the upper collider
-                if (colliderToDisableOnCrouch != null) {
-                    colliderToDisableOnCrouch.enabled = false;
-                }
-            } else {
-                // enable the collider when not crouching
-                if (colliderToDisableOnCrouch != null) {
-                    colliderToDisableOnCrouch.enabled = true;
-                }
-
-                if (wasCrouching) {
-                    // if previously crouching, but are no longer, generate the (un)crouch event
-                    wasCrouching = false;
-                    OnCrouchEvent.Invoke(false);
-                }
-            }
 
             // what speed do we want to travel?
             Vector3 targetVelocity = new Vector2(move * movementSpeed, GetComponent<Rigidbody2D>().velocity.y);
@@ -164,6 +132,12 @@ public class CharacterController2D : MonoBehaviour {
                 rigidBody.velocity = new Vector2(knockbackX, knockbackY);
             }
             healthManager.GetHit();
+        }
+
+        //End level
+        if (collision.collider.CompareTag("End"))
+        {
+            SceneManager.LoadScene("Menu");
         }
     }
 }
