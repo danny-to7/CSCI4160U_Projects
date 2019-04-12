@@ -48,6 +48,7 @@ public class WeaponSwitch : MonoBehaviour
 
     void Equip()
     {
+        //enable current weapon and disable others
         int i = 0;
         foreach (Transform weapon in transform)
         {

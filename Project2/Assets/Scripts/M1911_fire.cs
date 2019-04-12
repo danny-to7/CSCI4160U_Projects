@@ -6,9 +6,6 @@ public class M1911_fire : MonoBehaviour
     public AudioSource firingSound;
     public float damage = 20f;
     public float range = 100f;
-    public int magazineCapacity = 8;
-    public int loadedRounds = 8;
-
 
     public Camera mainCam;
     [SerializeField] private ParticleSystem terrainImpactEffect = null;
@@ -16,8 +13,7 @@ public class M1911_fire : MonoBehaviour
     [SerializeField] private ParticleSystem muzzleFlash = null;
     LayerMask enemyMask;
     LayerMask wallsMask;
-
-    // Start is called before the first frame update
+    
     void Start()
     {
         enemyMask = LayerMask.GetMask("Enemies");
@@ -31,35 +27,28 @@ public class M1911_fire : MonoBehaviour
     {
         if (Input.GetButtonDown("Shoot"))
         {
-            if (loadedRounds <= 0)
+            firingSound.PlayOneShot(soundClips);
+
+            //unfortunately muzzle flashes had to be disabled
+            //due to a strange bug that caused the particle system to
+            //go missing at random, crashing the whole script with it
+
+            //Instantiate(muzzleFlash);
+            //muzzleFlash.Play();
+
+            RaycastHit hit;
+            if (Physics.Raycast(mainCam.transform.position, mainCam.transform.forward, out hit, range, enemyMask))
             {
-                loadedRounds = magazineCapacity;
+
+                ParticleSystem blood = Instantiate(enemyImpactEffect, hit.point, Quaternion.identity);
+                hit.transform.SendMessageUpwards("ReceiveHit", damage);
             }
             else
             {
-                loadedRounds--;
-                firingSound.PlayOneShot(soundClips);
-
-                //unfortunately muzzle flashes had to be disabled
-                //due to a strange bug that caused the particle system to
-                //go missing at random, crashing the whole fucking script with it
-
-                //Instantiate(muzzleFlash);
-                //muzzleFlash.Play();
-
-                RaycastHit hit;
-                if (Physics.Raycast(mainCam.transform.position, mainCam.transform.forward, out hit, range, enemyMask))
-                {
-
-                    ParticleSystem blood = Instantiate(enemyImpactEffect, hit.point, Quaternion.identity);
-                    hit.transform.SendMessageUpwards("ReceiveHit", damage);
-                }
-                else
-                {
-
-                }
 
             }
+
+            
         }
     }
 }

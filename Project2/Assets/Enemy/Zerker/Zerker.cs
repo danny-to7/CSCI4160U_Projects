@@ -29,12 +29,14 @@ public class Zerker : MonoBehaviour
     }
     void ReceiveHit(float damage)
     {
+        //take damage and aggro player
         playerDiscovered = true;
         hp -= damage;
         Debug.Log(hp);
 
         if (hp <= 0)
         {
+            //disable this script and send dead message
             animator.SetBool("Dead", true);
             deadCheck.dead = true;
             enemyNav.destination = gameObject.transform.position;
@@ -45,10 +47,12 @@ public class Zerker : MonoBehaviour
 
     void Attack()
     {
+        //begin attack anim
         deliveredHit = false;
         animator.SetBool("Attacking", true);
     }
 
+    //move to next point
     void MoveToNextPatrolPoint()
     {
         if (patrolPoints.Length > 0)
@@ -65,17 +69,20 @@ public class Zerker : MonoBehaviour
         distanceToPlayer = Vector3.Distance(player.transform.position, gameObject.transform.position);
         animator.SetFloat("MoveSpeed", enemyNav.velocity.magnitude);
 
+        //attack if in range and not cooling down
         if (distanceToPlayer <= 2.5f && cooldownTimer <= 0f)
         {
             Attack();
             cooldownTimer = attackCooldown;
         }
+        //deal damage to player within certain frames of animation
         else if (distanceToPlayer <= 2f && cooldownTimer > 0.25f && cooldownTimer <= 1f && !deliveredHit)
         {
             deliveredHit = true;
             player.transform.GetComponent<PlayerHealth>().ReceiveHit(damage);
             cooldownTimer -= Time.deltaTime;
         }
+        //decrement cooldown
         else if (cooldownTimer > 0f)
         {
             cooldownTimer -= Time.deltaTime;
@@ -90,6 +97,7 @@ public class Zerker : MonoBehaviour
             playerDiscovered = true;
         }
 
+        //move to player
         if (playerDiscovered && cooldownTimer <= 0f)
         {
             enemyNav.destination = player.transform.position;

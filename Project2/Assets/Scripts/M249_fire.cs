@@ -6,8 +6,6 @@ public class M249_fire : MonoBehaviour
     public AudioSource firingSound;
     public float damage = 20f;
     public float range = 100f;
-    public int magazineCapacity = 8;
-    public int loadedRounds = 8;
     public float fireRate = 10f;
     private float timeToFire = 0f;
 
@@ -30,38 +28,32 @@ public class M249_fire : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //control rate of fire
         if (Input.GetButton("Shoot") && Time.time >= timeToFire)
         {
-            if (loadedRounds <= 0)
+            timeToFire = Time.time + 1f / fireRate;
+            firingSound.PlayOneShot(soundClips);
+
+            //unfortunately muzzle flashes had to be disabled
+            //due to a strange bug that caused the particle system to
+            //go missing at random, crashing the whole script with it
+
+            //Instantiate(muzzleFlash);
+            //muzzleFlash.Play();
+
+            RaycastHit hit;
+            if (Physics.Raycast(mainCam.transform.position, mainCam.transform.forward, out hit, range, enemyMask))
             {
-                loadedRounds = magazineCapacity;
+
+                ParticleSystem blood = Instantiate(enemyImpactEffect, hit.point, Quaternion.identity);
+                hit.transform.SendMessageUpwards("ReceiveHit", damage);
             }
             else
             {
-                timeToFire = Time.time + 1f / fireRate;
-                loadedRounds--;
-                firingSound.PlayOneShot(soundClips);
-
-                //unfortunately muzzle flashes had to be disabled
-                //due to a strange bug that caused the particle system to
-                //go missing at random, crashing the whole fucking script with it
-
-                //Instantiate(muzzleFlash);
-                //muzzleFlash.Play();
-
-                RaycastHit hit;
-                if (Physics.Raycast(mainCam.transform.position, mainCam.transform.forward, out hit, range, enemyMask))
-                {
-
-                    ParticleSystem blood = Instantiate(enemyImpactEffect, hit.point, Quaternion.identity);
-                    hit.transform.SendMessageUpwards("ReceiveHit", damage);
-                }
-                else
-                {
-
-                }
 
             }
+
+            
         }
     }
 }
