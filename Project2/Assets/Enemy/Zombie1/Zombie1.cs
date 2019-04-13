@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Zombie1 : MonoBehaviour
 {
@@ -46,6 +44,8 @@ public class Zombie1 : MonoBehaviour
         {
             animator.SetBool("Dead", true);
             deadCheck.dead = true;
+            //prevent trailing corpse glitch
+            enemyNav.destination = gameObject.transform.position;
             this.enabled = false;
             //Destroy(gameObject);
         }

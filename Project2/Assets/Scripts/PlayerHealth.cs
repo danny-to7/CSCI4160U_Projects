@@ -1,7 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -24,6 +24,7 @@ public class PlayerHealth : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //flash screen when hit
         if (isDamaged)
         {
             damageImage.color = flashColour;
@@ -33,10 +34,16 @@ public class PlayerHealth : MonoBehaviour
             damageImage.color = Color.Lerp(damageImage.color, Color.clear, flashingSpeed * Time.deltaTime);
         }
         isDamaged = false;
+
+        if (currentHealth <= 0)
+        {
+            SceneManager.LoadScene("End");
+        }
     }
 
     public void ReceiveHit(int damageAmount)
     {
+        //decrement health
         isDamaged = true;
         currentHealth -= damageAmount;
         healthBar.value = currentHealth;

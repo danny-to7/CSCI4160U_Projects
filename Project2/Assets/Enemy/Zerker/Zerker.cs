@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Zerker : MonoBehaviour
 {
@@ -39,6 +37,8 @@ public class Zerker : MonoBehaviour
             //disable this script and send dead message
             animator.SetBool("Dead", true);
             deadCheck.dead = true;
+            
+            //prevent trailing corpse glitch
             enemyNav.destination = gameObject.transform.position;
             this.enabled = false;
             //Destroy(gameObject);

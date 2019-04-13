@@ -45,12 +45,6 @@ public class M4A1_fire : MonoBehaviour
                 ParticleSystem blood = Instantiate(enemyImpactEffect, hit.point, Quaternion.identity);
                 hit.transform.SendMessageUpwards("ReceiveHit", damage);
             }
-            else
-            {
-
-            }
-
-            
         }
     }
 }

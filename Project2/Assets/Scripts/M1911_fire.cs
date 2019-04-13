@@ -43,11 +43,6 @@ public class M1911_fire : MonoBehaviour
                 ParticleSystem blood = Instantiate(enemyImpactEffect, hit.point, Quaternion.identity);
                 hit.transform.SendMessageUpwards("ReceiveHit", damage);
             }
-            else
-            {
-
-            }
-
             
         }
     }

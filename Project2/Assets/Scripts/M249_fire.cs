@@ -8,11 +8,14 @@ public class M249_fire : MonoBehaviour
     public float range = 100f;
     public float fireRate = 10f;
     private float timeToFire = 0f;
+    private float recoilSpeed = 0.2f;
 
     public Camera mainCam;
     [SerializeField] private ParticleSystem terrainImpactEffect = null;
     [SerializeField] private ParticleSystem enemyImpactEffect = null;
     [SerializeField] private ParticleSystem muzzleFlash = null;
+    
+
     LayerMask enemyMask;
     LayerMask wallsMask;
 
@@ -31,6 +34,7 @@ public class M249_fire : MonoBehaviour
         //control rate of fire
         if (Input.GetButton("Shoot") && Time.time >= timeToFire)
         {
+
             timeToFire = Time.time + 1f / fireRate;
             firingSound.PlayOneShot(soundClips);
 
@@ -48,12 +52,8 @@ public class M249_fire : MonoBehaviour
                 ParticleSystem blood = Instantiate(enemyImpactEffect, hit.point, Quaternion.identity);
                 hit.transform.SendMessageUpwards("ReceiveHit", damage);
             }
-            else
-            {
 
-            }
-
-            
         }
+
     }
 }
